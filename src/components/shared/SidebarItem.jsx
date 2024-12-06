@@ -1,8 +1,11 @@
 import PropTypes from "prop-types";
 import { useContext } from "react";
 import { SidebarContext } from "../../contexts/SidebarContext";
-export default function SidebarItem({ icon, text, active, alert }) {
+import { Link } from "react-router-dom"; // Import Link
+
+export default function SidebarItem({ icon, text, active, alert, to }) {
   const { expanded } = useContext(SidebarContext);
+
   return (
     <li
       className={`relative flex items-center py-2 px-3 my-1 font-medium rounded-md cursor-pointer transition-colors group ${
@@ -11,15 +14,17 @@ export default function SidebarItem({ icon, text, active, alert }) {
           : "hover:bg-indigo-50 text-gray-600"
       }`}
     >
-      {icon}
-      <span
-        className={` overflow-hidden transition-all ${
-          expanded ? "w-52 ml-3" : "w-0"
-        }`}
-      >
-        {" "}
-        {text}{" "}
-      </span>
+      <Link to={to} className="flex ">
+        {icon}
+        <span
+          className={`overflow-hidden transition-all ${
+            expanded ? "w-52 ml-3" : "w-0"
+          }`}
+        >
+          {text}
+        </span>
+      </Link>
+
       {alert && (
         <div
           className={`absolute right-2 w-2 h-2 rounded bg-indigo-400 ${
@@ -42,4 +47,5 @@ SidebarItem.propTypes = {
   text: PropTypes.string.isRequired,
   active: PropTypes.bool,
   alert: PropTypes.bool,
+  to: PropTypes.string.isRequired,
 };
