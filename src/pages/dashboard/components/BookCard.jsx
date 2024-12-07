@@ -1,6 +1,12 @@
 import { motion } from "framer-motion";
 import PropTypes from "prop-types";
+import { useNavigate } from "react-router-dom";
 export const BookCard = ({ book }) => {
+  const navigate = useNavigate();
+
+  const handleViewDetail = () => {
+    navigate(`/dashboard/books/${book.id}`);
+  };
   return (
     <motion.div
       key={book.id}
@@ -15,9 +21,16 @@ export const BookCard = ({ book }) => {
         alt={book.title}
         className="w-full h-56 object-cover"
       />
-      <div className="p-4">
+      <div className="p-2">
         <h2 className="text-lg font-semibold text-indigo-800">{book.title}</h2>
         <p className="text-sm text-gray-600 mt-2">{book.description}</p>
+
+        <button
+          onClick={handleViewDetail}
+          className="absolute bottom-2 right-2 text-xs bg-gray-200 text-black px-2 py-1 rounded-lg hover:bg-indigo-700 transition opacity-70 hover:opacity-100"
+        >
+          See Detail
+        </button>
       </div>
     </motion.div>
   );

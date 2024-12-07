@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { ChevronFirst, ChevronLast, MoreVertical } from "lucide-react";
+// import { ChevronFirst, ChevronLast, MoreVertical } from "lucide-react";
 import { useState } from "react";
 import { SidebarContext } from "../../contexts/SidebarContext";
 
@@ -44,7 +44,6 @@ export default function Sidebar({ children }) {
                 tadesseyared@gmail.com
               </span>
             </div>
-            <MoreVertical size={20} />
           </div>
         </div>
       </nav>

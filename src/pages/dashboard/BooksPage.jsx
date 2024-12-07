@@ -11,6 +11,7 @@ const booksData = [
     description: "A classic novel about the American Dream.",
     coverImage: "https://picsum.photos/250/250?random=1",
   },
+
   {
     id: 2,
     title: "To Kill a Mockingbird",
@@ -96,6 +97,11 @@ export default function BooksPage() {
       return;
     }
 
+    // Initialize section for new book if not present
+    if (!newBook.sections) {
+      newBook.sections = { id: 1, subsections: [] };
+    }
+
     const saveOrUpdateBook = isEditing
       ? axios.put(`http://localhost:5000/books/${selectedBook.id}`, newBook)
       : axios.post("http://localhost:5000/books", newBook);
@@ -117,7 +123,7 @@ export default function BooksPage() {
   };
 
   return (
-    <div className="p-6 w-full">
+    <div className="p-6 w-full h-screen overflow-y-scroll">
       <div className="w-full flex flex-row justify-between p-2">
         <h1 className="text-3xl font-semibold text-indigo-700 mb-6">
           Books List
