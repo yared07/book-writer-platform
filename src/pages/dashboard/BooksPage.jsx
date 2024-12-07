@@ -58,10 +58,25 @@ export default function BooksPage() {
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("User not authenticated");
+      return;
+    }
+
+    console.log("Sending request with token:", token);
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
     axios
-      .get("http://localhost:5000/books")
+      .get("http://localhost:5001/books", config)
       .then((response) => {
         const fetchedBooks = response.data;
+        console.log("feteol ", fetchedBooks);
         const mergedBooks = [...booksData, ...fetchedBooks];
         setBooks(mergedBooks);
       })
@@ -97,17 +112,35 @@ export default function BooksPage() {
       return;
     }
 
-    // Initialize section for new book if not present
-    if (!newBook.sections) {
-      newBook.sections = { id: 1, subsections: [] };
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("User not authenticated");
+      return;
     }
 
+    console.log("Sending request with token:", token);
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
     const saveOrUpdateBook = isEditing
-      ? axios.put(`http://localhost:5000/books/${selectedBook.id}`, newBook)
-      : axios.post("http://localhost:5000/books", newBook);
+      ? axios.put(
+          `http://localhost:5001/books/${selectedBook.id}`,
+          newBook,
+          config
+        )
+      : axios.post(
+          "http://localhost:5001/books",
+          { ...newBook, sections: { id: 1, subsections: [] } },
+          config
+        );
 
     saveOrUpdateBook
       .then((response) => {
+        console.log("Response from server:", response);
         if (isEditing) {
           setBooks(
             books.map((book) =>

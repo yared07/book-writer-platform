@@ -11,6 +11,7 @@ export const BookDetailPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [bookSections, setBookSections] = useState({});
   const { insertNode } = useNode();
+  console.log(bookSections, "flksjdlk");
 
   const handleInsertNode = (folderId, item) => {
     const finalStructure = insertNode(bookSections, folderId, item);
@@ -18,12 +19,28 @@ export const BookDetailPage = () => {
   };
 
   const handleSaveChanges = () => {
-    // Save the updated sections to the server
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("User not authenticated");
+      return;
+    }
+
+    console.log("Sending request with token:", token);
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
     axios
-      .put(`http://localhost:5000/books/${id}`, {
-        ...book,
-        sections: bookSections,
-      })
+      .put(
+        `http://localhost:5001/books/${id}`,
+        {
+          ...book,
+          sections: bookSections,
+        },
+        config
+      )
       .then(() => {
         toast.success("changes saved successful!", {
           position: "bottom-center",
@@ -39,9 +56,21 @@ export const BookDetailPage = () => {
   useEffect(() => {
     if (!id) return;
 
-    // Fetch book details
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("User not authenticated");
+      return;
+    }
+
+    console.log("Sending request with token:", token);
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
     axios
-      .get(`http://localhost:5000/books/${id}`)
+      .get(`http://localhost:5001/books/${id}`, config)
       .then((response) => {
         setBook(response.data);
         if (response.data.sections) {

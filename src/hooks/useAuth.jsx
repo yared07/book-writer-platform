@@ -34,7 +34,6 @@ export const AuthProvider = ({ children }) => {
   };
 
   const loginUser = async (credentials) => {
-    console.log("cred: ", credentials);
     try {
       const response = await fetch("http://localhost:5001/auth/signin/", {
         method: "POST",

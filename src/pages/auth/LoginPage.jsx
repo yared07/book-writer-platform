@@ -20,6 +20,7 @@ const Login = () => {
       navigate("/dashboard/books");
     } catch (err) {
       setError("Invalid email or password");
+      console.log("err: ", err);
       toast.error("Login failed");
     }
   };
