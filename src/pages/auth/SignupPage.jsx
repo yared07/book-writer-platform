@@ -1,25 +1,32 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth.jsx";
-import { toast } from "react-hot-toast"; // For user notifications
+import { toast } from "react-hot-toast";
 
 const Signup = () => {
-  const { registerUser } = useAuth(); // We'll define this context in the next step
+  const { registerUser } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
-
   const handleSignup = async (e) => {
     e.preventDefault();
 
     try {
       await registerUser({ email, password });
+
       toast.success("Registration successful");
-      navigate("/login"); // Redirect to login after successful signup
+
+      navigate("/login");
     } catch (err) {
-      setError("Something went wrong, please try again");
-      toast.error("Registration failed");
+      console.error("Error:", err);
+
+      const errorMessage =
+        err.message || "Something went wrong, please try again";
+
+      toast.error(errorMessage);
+
+      setError(errorMessage);
     }
   };
 

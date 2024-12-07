@@ -16,14 +16,18 @@ import { BookDetailPage } from "./pages/dashboard/components/BookDetail";
 import LoginPage from "./pages/auth/LoginPage";
 import SignupPage from "./pages/auth/SignupPage";
 import { AuthProvider, useAuth } from "./hooks/useAuth";
+import PropTypes from "prop-types";
 
-// Layout Components
 const AuthLayout = ({ children }) => {
   return (
     <div className="flex w-screen justify-center items-center h-screen">
       {children}
     </div>
   );
+};
+
+AuthLayout.propTypes = {
+  children: PropTypes.node.isRequired,
 };
 
 const MainLayout = ({ children }) => {
@@ -49,10 +53,17 @@ const MainLayout = ({ children }) => {
   );
 };
 
-// Protected Route Component
+MainLayout.propTypes = {
+  children: PropTypes.node.isRequired,
+};
+
 const ProtectedRoute = ({ element }) => {
   const { isAuthenticated } = useAuth();
   return isAuthenticated ? element : <Navigate to="/login" />;
+};
+
+ProtectedRoute.propTypes = {
+  element: PropTypes.node.isRequired,
 };
 
 function App() {
@@ -61,7 +72,6 @@ function App() {
       <AuthProvider>
         <Toaster />
         <Routes>
-          {/* Auth Routes */}
           <Route
             path="/login"
             element={

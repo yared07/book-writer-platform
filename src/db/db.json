@@ -1,5 +1,36 @@
 {
-  "users": [],
+  "users": [
+    {
+      "email": "test@example.com",
+      "password": "password123",
+      "id": 1
+    },
+    {
+      "email": "yaredtadese@gmail.com",
+      "password": "$2a$10$Mf8ZG2xFmi5r01VliC52ZuDS9kMc00130y0wi1t0IBW30xGktQb2K",
+      "id": 2
+    },
+    {
+      "email": "yaredtadeseffff@gmail.com",
+      "password": "$2a$10$bV3BOnO59FcMesCPx1wyZOrAWLRR3sEDbPmbT9cSvieXW2F.PBMk6",
+      "id": 3
+    },
+    {
+      "email": "yaredtaffdeseffff@gmail.com",
+      "password": "$2a$10$IFqXQV/zlPOV22Ig.Yez/.6dXCBQNC1BlVHtovjdO3qF9avdUvPeO",
+      "id": 4
+    },
+    {
+      "email": "yaredtadese123@gmail.com",
+      "password": "$2a$10$o15DWoCqlCxh8qYdZOBObuKzPttYn1KVR/Z6itVZdn2KuNS1/xS.C",
+      "id": 5
+    },
+    {
+      "email": "yaredtadese1234@gmail.com",
+      "password": "$2a$10$cG7ddeh1U1/OwJ5PMguNnOtlQsriUoJexbOLlcFDmT/5JjBBSeShS",
+      "id": 6
+    }
+  ],
   "books": [
     {
       "id": "1",

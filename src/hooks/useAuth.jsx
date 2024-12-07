@@ -1,5 +1,6 @@
 import { useState, createContext, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
 
 const AuthContext = createContext();
 
@@ -33,9 +34,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   const loginUser = async (credentials) => {
+    console.log("cred: ", credentials);
     try {
-      // Replace this with your actual login API request
-      const response = await fetch("http://localhost:5000/auth/login", {
+      const response = await fetch("http://localhost:5001/auth/signin/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -45,22 +46,22 @@ export const AuthProvider = ({ children }) => {
 
       const data = await response.json();
       if (response.ok) {
-        setToken(data.token);
-        localStorage.setItem("token", data.token);
-        setUser(data.user);
+        setToken(data.accessToken);
+        localStorage.setItem("token", data.accessToken);
+        setUser({ email: credentials.email });
         navigate("/dashboard/books");
       } else {
         throw new Error(data.message || "Login failed");
       }
     } catch (err) {
+      console.error(err);
       throw new Error("Login failed");
     }
   };
 
   const registerUser = async (credentials) => {
     try {
-      // Replace this with your actual signup API request
-      const response = await fetch("http://localhost:5000/auth/signup", {
+      const response = await fetch("http://localhost:5001/auth/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -68,14 +69,14 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify(credentials),
       });
 
-      const data = await response.json();
       if (response.ok) {
-        await loginUser(credentials); // Automatically log in after signup
+        await loginUser(credentials);
       } else {
-        throw new Error(data.message || "Signup failed");
+        const data = await response.json();
+        throw new Error(data || "Signup failed");
       }
     } catch (err) {
-      throw new Error("Signup failed");
+      throw new Error("Signup failed: " + err.message);
     }
   };
 
@@ -87,8 +88,20 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loginUser, registerUser, logoutUser }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        loginUser,
+        registerUser,
+        logoutUser,
+        isAuthenticated: !!user,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
+};
+
+AuthProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 };
