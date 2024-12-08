@@ -10,10 +10,15 @@ export const BookDetailPage = () => {
   const [book, setBook] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [bookSections, setBookSections] = useState({});
-  const { insertNode } = useNode();
+  const { insertNode, editNode } = useNode();
 
   const handleInsertNode = (folderId, item) => {
     const finalStructure = insertNode(bookSections, folderId, item);
+    setBookSections(finalStructure);
+  };
+
+  const handleEditNode = (folderId, value) => {
+    const finalStructure = editNode(bookSections, folderId, value);
     setBookSections(finalStructure);
   };
 
@@ -88,7 +93,7 @@ export const BookDetailPage = () => {
 
   return (
     <div className="p-6 w-full h-screen overflow-y-scroll">
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-4xl mx-auto overflow-x-scroll">
         <h1 className="text-3xl font-semibold text-indigo-700 mb-6">
           {book.title}
         </h1>
@@ -99,6 +104,7 @@ export const BookDetailPage = () => {
             <Section
               section={bookSections}
               handleInsertNode={handleInsertNode}
+              handleEditNode={handleEditNode}
             />
           )}
         </div>

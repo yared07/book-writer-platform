@@ -1,15 +1,19 @@
 import PropTypes from "prop-types";
 import { useContext } from "react";
 import { SidebarContext } from "../../contexts/SidebarContext";
-import { Link } from "react-router-dom"; // Import Link
+import { Link, useLocation, matchPath } from "react-router-dom";
 
-export default function SidebarItem({ icon, text, active, alert, to }) {
+export default function SidebarItem({ icon, text, alert, to }) {
   const { expanded } = useContext(SidebarContext);
+  const location = useLocation();
+
+  // Use matchPath to check if the location matches the path pattern
+  const isActive = matchPath({ path: to, end: false }, location.pathname);
 
   return (
     <li
       className={`relative flex items-center py-2 px-3 my-1 font-medium rounded-md cursor-pointer transition-colors group ${
-        active
+        isActive
           ? "bg-gradient-to-tr from-indigo-200 to-indigo-100 text-indigo-800"
           : "hover:bg-indigo-50 text-gray-600"
       }`}
@@ -45,7 +49,6 @@ export default function SidebarItem({ icon, text, active, alert, to }) {
 SidebarItem.propTypes = {
   icon: PropTypes.node.isRequired,
   text: PropTypes.string.isRequired,
-  active: PropTypes.bool,
   alert: PropTypes.bool,
   to: PropTypes.string.isRequired,
 };

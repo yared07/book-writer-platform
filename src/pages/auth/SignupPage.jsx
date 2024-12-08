@@ -31,7 +31,7 @@ const Signup = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+    <div className="flex justify-center items-center min-h-screen w-full bg-gray-100">
       <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-lg">
         <h2 className="text-xl font-semibold mb-4">Sign Up</h2>
         {error && <p className="text-red-500 mb-4">{error}</p>}

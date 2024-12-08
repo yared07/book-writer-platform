@@ -1,7 +1,6 @@
 const useNode = () => {
   const insertNode = function (tree, sectionId, item) {
     if (tree.id === sectionId) {
-      console.log("lajflksajfldskjflkd", tree, sectionId, item);
       tree.subsections.push({
         id: new Date().getTime(),
         title: item,
@@ -19,14 +18,14 @@ const useNode = () => {
     return { ...tree, subsections: latestNode };
   };
 
-  const editNode = (tree, commentId, value) => {
-    if (tree.id === commentId) {
-      tree.name = value;
+  const editNode = (tree, sectionId, value) => {
+    if (tree.id === sectionId) {
+      tree.title = value;
       return tree;
     }
 
-    tree.items.map((ob) => {
-      return editNode(ob, commentId, value);
+    tree.subsections.map((ob) => {
+      return editNode(ob, sectionId, value);
     });
 
     return { ...tree };
