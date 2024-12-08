@@ -21,11 +21,12 @@ export const AuthProvider = ({ children }) => {
 
   const fetchUserProfile = async (token) => {
     try {
-      const response = await fetch("http://localhost:5000/auth/me", {
+      const response = await fetch("http://localhost:5001/auth/me", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+      console.log(response);
       const userProfile = await response.json();
       setUser(userProfile);
     } catch (err) {

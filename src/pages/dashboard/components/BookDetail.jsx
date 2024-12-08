@@ -11,7 +11,6 @@ export const BookDetailPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [bookSections, setBookSections] = useState({});
   const { insertNode } = useNode();
-  console.log(bookSections, "flksjdlk");
 
   const handleInsertNode = (folderId, item) => {
     const finalStructure = insertNode(bookSections, folderId, item);
