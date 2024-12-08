@@ -2,25 +2,23 @@ import jsonServer from "json-server";
 import auth from "json-server-auth";
 import cors from "cors";
 import jwt from "jsonwebtoken";
-import express from "express"; // You need to import express
-import bcrypt from "bcryptjs"; // Import bcrypt for password hashing and comparison
+import express from "express";
+import bcrypt from "bcryptjs";
 
 const server = jsonServer.create();
 const router = jsonServer.router("src/db/db.json");
 const middlewares = jsonServer.defaults();
 
-server.use(express.json()); // Ensure this is called before the routes
+server.use(express.json());
 
-// Configure CORS
 server.use(
   cors({
     origin: "*",
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Specify allowed methods
-    allowedHeaders: ["Content-Type", "Authorization"], // Specify allowed headers
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
-// Assign the database instance
 server.db = router.db;
 
 server.use((req, res, next) => {
@@ -108,37 +106,30 @@ server.put("/books/:id", (req, res) => {
   res.status(200).json(book);
 });
 
-// Simple signup route
 server.post("/auth/signup", async (req, res) => {
   const { email, password } = req.body;
 
-  // Basic validation to ensure email and password are provided
   if (!email || !password) {
     return res
       .status(400)
       .json({ message: "Email and password are required." });
   }
 
-  // Check if the user already exists
   const existingUser = server.db.get("users").find({ email }).value();
   if (existingUser) {
     return res.status(400).json({ message: "Email already in use." });
   }
 
-  // Hash the password using bcrypt
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  // Create the new user object
   const newUser = {
     email,
-    password: password, // Save the hashed password
-    id: Date.now(), // Simple user ID based on the current timestamp
+    password: password,
+    id: Date.now(),
   };
 
-  // Save the user to the database
   server.db.get("users").push(newUser).write();
 
-  // Generate a JWT token for the user
   const token = jwt.sign(
     { sub: newUser.id, email: newUser.email },
     "flskfj==",
@@ -147,10 +138,8 @@ server.post("/auth/signup", async (req, res) => {
     }
   );
 
-  // Respond with the token
   res.status(201).json({ accessToken: token });
 });
-// Simple signin route
 server.post("/auth/signin", async (req, res) => {
   const { email, password } = req.body;
 
@@ -233,7 +222,6 @@ server.put("/users/:id", (req, res) => {
   const { id } = req.params;
   const { newCollaborator } = req.body;
 
-  // Get the current user from the DB
   const user = server.db
     .get("users")
     .find({ id: Number(id) })
@@ -243,34 +231,28 @@ server.put("/users/:id", (req, res) => {
     return res.status(404).json({ message: "User not found" });
   }
 
-  // Exclude the password field from being updated
   const { password, ...userWithoutPassword } = user;
 
-  // Ensure collaborators is an array (initialize if necessary)
   const currentCollaborators = user.collaborators || [];
 
-  // Update the user's collaborators (without changing the password)
   const updatedUser = {
-    ...userWithoutPassword, // Spread the user data without the password
-    collaborators: [...currentCollaborators, newCollaborator], // Add the new collaborators
+    ...userWithoutPassword,
+    collaborators: [...currentCollaborators, newCollaborator],
   };
 
-  // Update the user in the database
   server.db
     .get("users")
     .find({ id: Number(id) })
     .assign(updatedUser)
     .write();
 
-  // Return the updated user data (excluding password)
   res.status(200).json(updatedUser);
 });
 
 server.put("/collabs/:id", (req, res) => {
   const { id } = req.params;
-  const { collaborators } = req.body; // The new collaborators list comes in the request body
+  const { collaborators } = req.body;
 
-  // Get the current user from the DB
   const user = server.db
     .get("users")
     .find({ id: Number(id) })
@@ -280,29 +262,24 @@ server.put("/collabs/:id", (req, res) => {
     return res.status(404).json({ message: "User not found" });
   }
 
-  // Validate that collaborators is an array
   if (!Array.isArray(collaborators)) {
     return res.status(400).json({ message: "Collaborators must be an array." });
   }
 
-  // Replace the user's collaborators with the new list
   const updatedUser = {
     ...user,
-    collaborators, // Replace with the new collaborators array
+    collaborators,
   };
 
-  // Update the user in the database
   server.db
     .get("users")
     .find({ id: Number(id) })
     .assign(updatedUser)
     .write();
 
-  // Return the updated user data (including the new collaborators list)
   res.status(200).json(updatedUser);
 });
 
-// Apply middlewares and default routes
 server.use(middlewares);
 server.use(auth);
 server.use(router);
