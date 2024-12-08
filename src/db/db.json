@@ -2844,61 +2844,20 @@
       "id": 1733633126732,
       "collaborators": [
         {
-          "email": "collabon2@gmail.com",
-          "role": "Author"
-        },
-        {
-          "email": "collabon2@gmail.com",
-          "role": "Author"
-        },
-        {
-          "email": "collabtow@gmail.com",
+          "email": "test@gmail.com",
+          "password": "1234",
           "role": "Collaborator"
         },
         {
-          "email": "collabon2@gmail.com",
+          "email": "testTwo@gmail.com",
+          "password": "1234",
           "role": "Author"
         },
         {
-          "email": "collabon2@gmail.com",
-          "role": "Author"
-        },
-        {
-          "email": "collabtow@gmail.com",
+          "email": "testfsfs@gmail.com",
+          "password": "password",
           "role": "Collaborator"
-        },
-        {
-          "email": "a",
-          "role": "Author"
-        },
-        {
-          "email": "fs",
-          "role": "Collaborator"
-        },
-        {
-          "email": "fsd",
-          "role": "Collaborator"
-        },
-        {
-          "email": "fffff",
-          "role": "Collaborator"
-        },
-        {
-          "email": "fsdfsdfsdfsdfsafsdafsadfsdfsad",
-          "role": "Collaborator"
-        },
-        {
-          "email": "adminlevel",
-          "role": "Author"
-        },
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null
+        }
       ]
     }
   ],

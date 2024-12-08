@@ -47,7 +47,10 @@ export const AuthProvider = ({ children }) => {
       const data = await response.json();
       if (response.ok) {
         setToken(data.accessToken);
+        console.log("KJLFkjlkdsjflskd", data);
         localStorage.setItem("token", data.accessToken);
+        localStorage.setItem("account", data.account);
+
         setUser({ email: credentials.email });
         navigate("/dashboard/books");
       } else {

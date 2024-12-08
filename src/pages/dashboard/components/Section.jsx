@@ -9,6 +9,10 @@ export const Section = ({ section, handleInsertNode, handleEditNode }) => {
   const [editMode, setEditMode] = useState(false);
   const [showInput, setShowInput] = useState(false);
   const [expand, setExpand] = useState(false);
+  const account = localStorage.getItem("account");
+
+  console.log("account", account);
+
   const inputRef = useRef(null);
   const handleNewSection = () => {
     setShowInput(true);
@@ -44,9 +48,14 @@ export const Section = ({ section, handleInsertNode, handleEditNode }) => {
             className="w-full"
           />
           <Action
-            className="bg-indigo-700 text-white w-36 h-10 mt-2 flex justify-center items-center font-semibold rounded-md shadow-lg"
+            className={`w-36 h-10 mt-2 flex justify-center items-center font-semibold rounded-md shadow-lg transition-opacity ${
+              account === "collaborate"
+                ? "bg-indigo-300 text-white opacity-50 cursor-not-allowed"
+                : "bg-indigo-700 text-white"
+            }`}
             type="Add Main Section"
             handleClick={onAddMainSection}
+            disabled={localStorage.getItem("account") === "collaborate"}
           />
         </div>
       ) : (

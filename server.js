@@ -108,7 +108,6 @@ server.post("/auth/signup", async (req, res) => {
   // Respond with the token
   res.status(201).json({ accessToken: token });
 });
-
 // Simple signin route
 server.post("/auth/signin", async (req, res) => {
   const { email, password } = req.body;
@@ -123,26 +122,69 @@ server.post("/auth/signin", async (req, res) => {
   // Find the user in the database
   const user = server.db.get("users").find({ email }).value();
 
-  // If user is not found, respond with an error
-  if (!user) {
-    return res.status(401).json({ message: "Invalid email or password." });
+  // If user is found, check the password and generate a JWT token
+  if (user) {
+    const passwordMatch = password === user.password; // Assuming no hashed password yet
+    if (!passwordMatch) {
+      return res.status(401).json({ message: "Invalid email or password." });
+    }
+
+    // If passwords match, generate a JWT token for the user
+    const token = jwt.sign({ sub: user.id, email: user.email }, "flskfj==", {
+      expiresIn: "1h",
+    });
+
+    // Respond with the token and additional information
+    return res.status(200).json({
+      accessToken: token,
+      account: "main", // User logged in as the main account
+      user: {
+        id: user.id,
+        email: user.email,
+        role: user.role, // Include role or any other relevant details
+      },
+    });
   }
 
-  // Compare the provided password with the stored hashed password
-  const passwordMatch = password === user.password;
-  console.log(password, user.password, passwordMatch);
+  // If the user is not found, check if the email exists in any user's collaborators list
+  const users = server.db.get("users").value();
+  let collaboratorUser = null;
 
-  if (!passwordMatch) {
-    return res.status(401).json({ message: "Invalid email or password." });
+  for (let i = 0; i < users.length; i++) {
+    const collaborators = users[i].collaborators || [];
+    const collaborator = collaborators?.find(
+      (collaborator) => collaborator.email === email
+    );
+
+    if (collaborator) {
+      // Check if the password matches the collaborator's password
+      const passwordMatch = password === collaborator.password;
+      if (passwordMatch) {
+        // If password matches, generate a JWT token for the main user (the owner of the account)
+        const token = jwt.sign(
+          { sub: users[i].id, email: users[i].email },
+          "flskfj==",
+          { expiresIn: "1h" }
+        );
+
+        // Respond with the token and collaborator-related info
+        return res.status(200).json({
+          accessToken: token,
+          account: "collaborate", // Indicate that this is a collaborator's account
+          user: {
+            id: users[i].id,
+            email: users[i].email,
+            role: users[i].role, // Include the role of the main user
+            collaboratorEmail: collaborator.email, // The collaborator's email
+            collaboratorRole: collaborator.role, // The collaborator's role
+          },
+        });
+      }
+    }
   }
 
-  // If passwords match, generate a JWT token for the user
-  const token = jwt.sign({ sub: user.id, email: user.email }, "flskfj==", {
-    expiresIn: "1h",
-  });
-
-  // Respond with the token
-  res.status(200).json({ accessToken: token });
+  // If no user or collaborator found, respond with an error
+  return res.status(401).json({ message: "Invalid email or password." });
 });
 
 server.put("/users/:id", (req, res) => {
