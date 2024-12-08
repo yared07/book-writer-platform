@@ -64,8 +64,6 @@ export default function BooksPage() {
       return;
     }
 
-    console.log("Sending request with token:", token);
-
     const config = {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -76,7 +74,6 @@ export default function BooksPage() {
       .get("http://localhost:5001/books", config)
       .then((response) => {
         const fetchedBooks = response.data;
-        console.log("feteol ", fetchedBooks);
         const mergedBooks = [...booksData, ...fetchedBooks];
         setBooks(mergedBooks);
       })
@@ -118,8 +115,6 @@ export default function BooksPage() {
       return;
     }
 
-    console.log("Sending request with token:", token);
-
     const config = {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -140,7 +135,6 @@ export default function BooksPage() {
 
     saveOrUpdateBook
       .then((response) => {
-        console.log("Response from server:", response);
         if (isEditing) {
           setBooks(
             books.map((book) =>

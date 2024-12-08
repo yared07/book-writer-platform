@@ -14,13 +14,11 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      console.log(email, password);
       await loginUser({ email, password });
       toast.success("Login successful");
       navigate("/dashboard/books");
     } catch (err) {
       setError("Invalid email or password");
-      console.log("err: ", err);
       toast.error("Login failed");
     }
   };

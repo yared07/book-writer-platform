@@ -8,10 +8,8 @@ export const Section = ({ section, handleInsertNode, handleEditNode }) => {
   const [input, setInput] = useState("");
   const [editMode, setEditMode] = useState(false);
   const [showInput, setShowInput] = useState(false);
-  const [expand, setExpand] = useState(false);
-  const account = localStorage.getItem("account");
-
-  console.log("account", account);
+  const [expand, setExpand] = useState(true);
+  const isCollaborator = localStorage.getItem("account") === "collaborate";
 
   const inputRef = useRef(null);
   const handleNewSection = () => {
@@ -46,16 +44,17 @@ export const Section = ({ section, handleInsertNode, handleEditNode }) => {
             placeholder="Enter New Subsection"
             value={input}
             className="w-full"
+            disabled={isCollaborator}
           />
           <Action
-            className={`w-36 h-10 mt-2 flex justify-center items-center font-semibold rounded-md shadow-lg transition-opacity ${
-              account === "collaborate"
+            className={`w-36 h-10 mt-2 flex justify-center items-center font-semibold rounded-md shadow-lg  transition-opacity ${
+              isCollaborator
                 ? "bg-indigo-300 text-white opacity-50 cursor-not-allowed"
                 : "bg-indigo-700 text-white"
             }`}
             type="Add Main Section"
             handleClick={onAddMainSection}
-            disabled={localStorage.getItem("account") === "collaborate"}
+            disabled={isCollaborator}
           />
         </div>
       ) : (
@@ -125,15 +124,17 @@ export const Section = ({ section, handleInsertNode, handleEditNode }) => {
             placeholder="Enter New Subsection"
             value={input}
             className="w-full"
+            disabled={isCollaborator}
           />
           <div className="flex gap-2">
             <Action
-              className="bg-indigo-700 text-white text-sm font-semibold rounded-md shadow-md"
+              className="bg-indigo-700 text-white text-sm font-semibold rounded-md shadow-md p-1"
               type="Add Subsection"
               handleClick={onAddMainSection}
+              disabled={isCollaborator}
             />
             <Action
-              className="text-sm font-semibold text-gray-600"
+              className="text-sm font-semibold text-gray-600 p-1 bg-gray-200 rounded-md"
               type="Cancel"
               handleClick={() => setShowInput(false)}
             />

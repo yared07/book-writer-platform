@@ -29,8 +29,6 @@ export const BookDetailPage = () => {
       return;
     }
 
-    console.log("Sending request with token:", token);
-
     const config = {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -65,8 +63,6 @@ export const BookDetailPage = () => {
       console.error("User not authenticated");
       return;
     }
-
-    console.log("Sending request with token:", token);
 
     const config = {
       headers: {

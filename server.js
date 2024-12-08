@@ -24,8 +24,6 @@ server.use(
 server.db = router.db;
 
 server.use((req, res, next) => {
-  console.log("Incoming request:", req.method, req.path);
-  console.log("Request headers:", req.headers);
   if (req.path.startsWith("/books")) {
     const token = req.headers.authorization?.split(" ")[1];
 
@@ -51,11 +49,17 @@ server.use((req, res, next) => {
   }
   next();
 });
-server.post("/books", (req, res) => {
-  console.log("Received POST request at /books");
-  console.log("Request body:", req.body);
-  console.log("Authenticated user:", req.user);
 
+server.get("/books", (req, res) => {
+  const userBooks = server.db
+    .get("books")
+    .filter({ userId: Number(req.user.id) })
+    .value();
+
+  res.json(userBooks);
+});
+
+server.post("/books", (req, res) => {
   const book = {
     ...req.body,
     userId: req.user.id,
@@ -63,6 +67,45 @@ server.post("/books", (req, res) => {
 
   const newBook = server.db.get("books").insert(book).write();
   res.status(201).json(newBook);
+});
+
+server.put("/books/:id", (req, res) => {
+  // Get the book ID from the route parameter
+  const { id } = req.params;
+
+  // Find the book by ID
+  let book = server.db
+    .get("books")
+    .find({ id: parseInt(id) })
+    .value();
+
+  // If the book is not found, return a 404 error
+  if (!book) {
+    return res.status(404).json({ message: "Book not found" });
+  }
+
+  // Ensure that the authenticated user is the one who created the book
+  if (book.userId !== req.user.id) {
+    return res
+      .status(403)
+      .json({ message: "You are not authorized to edit this book" });
+  }
+
+  // Merge the existing book with the new data from the request body
+  book = {
+    ...book,
+    ...req.body, // This will update all fields from the request body
+  };
+
+  // Save the updated book back to the database
+  server.db
+    .get("books")
+    .find({ id: parseInt(id) })
+    .assign(book)
+    .write();
+
+  // Respond with the updated book
+  res.status(200).json(book);
 });
 
 // Simple signup route
@@ -103,7 +146,6 @@ server.post("/auth/signup", async (req, res) => {
       expiresIn: "1h",
     }
   );
-  console.log(newUser);
 
   // Respond with the token
   res.status(201).json({ accessToken: token });
@@ -196,7 +238,6 @@ server.put("/users/:id", (req, res) => {
     .get("users")
     .find({ id: Number(id) })
     .value();
-  console.log("here", user);
 
   if (!user) {
     return res.status(404).json({ message: "User not found" });
@@ -207,7 +248,6 @@ server.put("/users/:id", (req, res) => {
 
   // Ensure collaborators is an array (initialize if necessary)
   const currentCollaborators = user.collaborators || [];
-  console.log("here", currentCollaborators);
 
   // Update the user's collaborators (without changing the password)
   const updatedUser = {
@@ -226,15 +266,40 @@ server.put("/users/:id", (req, res) => {
   res.status(200).json(updatedUser);
 });
 
-server.get("/books", (req, res) => {
-  console.log("Fetching books for user:", req.user);
-  const userBooks = server.db
-    .get("books")
-    .filter({ userId: Number(req.user.id) })
+server.put("/collabs/:id", (req, res) => {
+  const { id } = req.params;
+  const { collaborators } = req.body; // The new collaborators list comes in the request body
+
+  // Get the current user from the DB
+  const user = server.db
+    .get("users")
+    .find({ id: Number(id) })
     .value();
 
-  console.log("Fetched books:", userBooks);
-  res.json(userBooks);
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  // Validate that collaborators is an array
+  if (!Array.isArray(collaborators)) {
+    return res.status(400).json({ message: "Collaborators must be an array." });
+  }
+
+  // Replace the user's collaborators with the new list
+  const updatedUser = {
+    ...user,
+    collaborators, // Replace with the new collaborators array
+  };
+
+  // Update the user in the database
+  server.db
+    .get("users")
+    .find({ id: Number(id) })
+    .assign(updatedUser)
+    .write();
+
+  // Return the updated user data (including the new collaborators list)
+  res.status(200).json(updatedUser);
 });
 
 // Apply middlewares and default routes

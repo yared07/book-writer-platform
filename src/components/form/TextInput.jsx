@@ -6,6 +6,7 @@ export const TextInput = ({
   onChange,
   placeholder = "",
   error,
+  disabled,
 }) => (
   <div className="mb-4">
     <label className="block mb-1 font-medium text-gray-700">{label}</label>
@@ -17,6 +18,7 @@ export const TextInput = ({
       className={`border p-2 w-full rounded ${
         error ? "border-red-500" : "border-gray-300"
       }`}
+      disabled={disabled}
     />
     {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
   </div>
@@ -28,4 +30,5 @@ TextInput.propTypes = {
   onChange: PropTypes.func.isRequired, // The callback function to handle input changes
   placeholder: PropTypes.string, // Optional placeholder text
   error: PropTypes.string, // Optional error message
+  disabled: PropTypes.bool,
 };
